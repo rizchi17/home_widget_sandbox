@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
+import 'dart:math';
 
 void main() {
   runApp(const MyApp());
@@ -57,6 +58,29 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Future<void> _fetchWeatherData() async {
+    // ランダムな天気データを生成
+    final random = Random();
+    final temperatures = [15, 18, 22, 25, 28, 30, 32];
+    final conditions = ['Sunny', 'Cloudy', 'Rainy', 'Snowy'];
+
+    final temp = temperatures[random.nextInt(temperatures.length)];
+    final condition = conditions[random.nextInt(conditions.length)];
+
+    String weatherData = '$condition $temp°C';
+
+    // save weather data
+    await HomeWidget.saveWidgetData<String>(dataKey, weatherData);
+
+    // update widget
+    await HomeWidget.updateWidget(
+      iOSName: iosWidgetName,
+      androidName: androidWidgetName,
+    );
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,6 +96,11 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _fetchWeatherData,
+              child: const Text('Update Weather Widget'),
             ),
           ],
         ),
